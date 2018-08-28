@@ -1,0 +1,191 @@
+{
+	"info": {
+		"_postman_id": "550037b9-a1b7-4287-9dcb-8d3bebf615c0",
+		"name": "Tyk Dashboard - bootstrap poc user",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:3000/admin/organisations",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b6579701-c249-4f3e-9256-d81f273cfd65",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set(\"orgId\", pm.response.json().Meta);",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "admin-auth",
+						"value": "12345"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"owner_name\": \"Default Organisation\",\n  \"owner_slug\": \"default\",\n  \"cname_enabled\": false\n}\n"
+				},
+				"url": {
+					"raw": "http://localhost:3000/admin/organisations",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"organisations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/admin/users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "98616ff5-5674-4562-a9d2-c72a925212e8",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set(\"userAuth\", pm.response.json().Message);",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "admin-auth",
+						"value": "12345"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"first_name\": \"PoC\",\n  \"last_name\": \"User\",\n  \"email_address\": \"poc-user@default.com\",\n  \"active\": true,\n  \"org_id\": \"{{orgId}}\"\n}\n"
+				},
+				"url": {
+					"raw": "http://localhost:3000/admin/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"admin",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/api/users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "78036456-b9a7-4919-8e84-9c0b4f3c57a0",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set(\"userId\", pm.response.json().users[0].id);",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "{{userAuth}}"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:3000/api/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/api/users/5b7fff5653123a77d5257710/actions/reset",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "54fc051b-bffd-4518-a2d8-93ea1ad34ead",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.unset(\"userId\");",
+							"pm.environment.unset(\"userAuth\");",
+							"pm.environment.unset(\"orgId\");",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "{{userAuth}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"new_password\": \"test123\"\n}\n"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/{{userId}}/actions/reset",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"{{userId}}",
+						"actions",
+						"reset"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
