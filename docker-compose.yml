@@ -1,0 +1,52 @@
+version: '3.6'
+networks:
+  tyk_network:
+    name: tyk_network
+
+services:
+  tyk_redis:
+    image: redis
+    container_name: tyk_redis
+    networks:
+      tyk_network:
+        aliases:
+          - redis
+
+  tyk_mongo:
+    image: mongo
+    container_name: tyk_mongo
+    networks:
+      tyk_network:
+        aliases:
+          - mongo
+
+  tyk_pump:
+    image: tykio/tyk-pump-docker-pub
+    container_name: tyk_pump
+    networks:
+      tyk_network:
+
+  tyk_dashboard:
+    image: tykio/tyk-dashboard
+    container_name: tyk_dashboard
+    networks:
+      tyk_network:
+        aliases:
+          - 'dashboard.tyk.docker'
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./dashboard/tyk_analytics.conf:/opt/tyk-dashboard/tyk_analytics.conf"
+
+  tyk_gateway:
+    image: tykio/tyk-gateway
+    container_name: tyk_gateway
+    networks:
+      tyk_network:
+        aliases:
+          - 'tyk.docker'
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./gateway/tyk.conf:/opt/tyk-gateway/tyk.conf"
+
