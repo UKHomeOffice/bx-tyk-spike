@@ -1,4 +1,4 @@
-Tyk Spike
+# Tyk Spike
 
 This project helps to bootstrap a simple Tyk installation, including dashboard.
 
